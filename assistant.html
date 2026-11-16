@@ -1,130 +1,134 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#090914">
-<title>NOVA Assistant</title>
+<title>NOVA AI Assistant</title>
 
 <style>
-* { box-sizing:border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
-  margin:0;
-  background:#090914;
-  color:#f5f3ff;
-  font-family:Arial,sans-serif;
+  margin: 0;
+  background: #090914;
+  color: #f4f1ff;
+  font-family: Arial, sans-serif;
 }
 
 header {
-  padding:20px;
-  border-bottom:1px solid #29263b;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  padding: 22px;
+  background: #151326;
+  border-bottom: 1px solid #30264b;
+  text-align: center;
 }
 
-.logo {
-  font-size:25px;
-  font-weight:bold;
-  color:#b69cff;
+header h1 {
+  color: #a98aff;
+  margin: 0;
+  font-size: 28px;
+}
+
+header p {
+  color: #aaa2bd;
+  margin-bottom: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 18px;
 }
 
 .status {
-  color:#65e6a2;
-  font-size:12px;
+  color: #9b8bbd;
+  font-size: 13px;
+  margin: 10px 0 18px;
+  text-align: center;
 }
 
-main {
-  max-width:760px;
-  margin:auto;
-  padding:20px;
-}
-
-h1 { font-size:30px; }
-
-.subtitle {
-  color:#aaa5bd;
-  line-height:1.6;
-}
-
-select, textarea, button {
-  font:inherit;
-}
-
-select, textarea {
-  background:#171629;
-  color:white;
-  border:1px solid #38334e;
-  border-radius:12px;
-  padding:13px;
-  width:100%;
-}
-
-.controls {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin:20px 0;
-}
-
-#chat {
-  height:390px;
-  overflow-y:auto;
-  padding:15px;
-  background:#111020;
-  border:1px solid #302b46;
-  border-radius:16px;
+.chat {
+  height: 55vh;
+  min-height: 320px;
+  overflow-y: auto;
+  padding: 15px;
+  background: #11101e;
+  border: 1px solid #30264b;
+  border-radius: 20px;
 }
 
 .message {
-  padding:13px;
-  border-radius:12px;
-  margin:12px 0;
-  line-height:1.6;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
+  padding: 14px 17px;
+  margin: 12px 0;
+  border-radius: 16px;
+  max-width: 88%;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .user {
-  background:#30264c;
-  margin-left:12%;
+  background: #392552;
+  margin-left: auto;
 }
 
 .bot {
-  background:#1d1b31;
-  margin-right:8%;
+  background: #201b32;
+  margin-right: auto;
 }
 
-small {
-  color:#a9a3bd;
+.sender {
+  font-size: 12px;
+  color: #bba6ff;
+  margin-bottom: 6px;
 }
 
 textarea {
-  margin-top:15px;
-  resize:vertical;
-  min-height:85px;
+  width: 100%;
+  margin-top: 16px;
+  padding: 17px;
+  background: #171526;
+  color: white;
+  border: 1px solid #40345d;
+  border-radius: 14px;
+  font-size: 16px;
+  resize: vertical;
+  min-height: 85px;
 }
 
 button {
-  width:100%;
-  margin-top:10px;
-  padding:14px;
-  border:0;
-  border-radius:12px;
-  background:#9670ed;
-  color:white;
-  font-weight:bold;
+  padding: 15px;
+  border: none;
+  border-radius: 13px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
 }
 
-button:active { opacity:.8; }
+.send {
+  width: 100%;
+  margin-top: 12px;
+  background: #8155ce;
+  color: white;
+}
+
+.clear {
+  display: block;
+  margin: 12px auto;
+  background: #28233a;
+  color: #d5c7f5;
+}
 
 footer {
-  text-align:center;
-  color:#89839e;
-  font-size:12px;
-  padding:25px;
+  text-align: center;
+  padding: 25px 10px;
+  color: #817994;
+  font-size: 13px;
+}
+
+button:active {
+  opacity: 0.75;
 }
 </style>
 </head>
@@ -132,167 +136,223 @@ footer {
 <body>
 
 <header>
-  <div class="logo">✦ NOVA</div>
-  <div class="status">● Prototype online</div>
+  <h1>NOVA AI</h1>
+  <p>Intelligence. Creativity. Possibility.</p>
 </header>
 
-<main>
+<div class="container">
 
-<h1>Meet NOVA Assistant</h1>
-
-<p class="subtitle">
-Your adaptive multilingual AI assistant.
-One workspace. Many possibilities.
-</p>
-
-<div class="controls">
-  <div>
-    <small>Personality</small>
-    <select id="personality">
-      <option value="adaptive">Adaptive</option>
-      <option value="professional">Professional</option>
-      <option value="friendly">Friendly</option>
-      <option value="technical">Technical</option>
-    </select>
+  <div class="status">
+    ● NOVA Assistant | Multilingual Prototype
   </div>
 
-  <div>
-    <small>Language</small>
-    <select id="language">
-      <option value="auto">Auto detect</option>
-      <option value="both">Bengali + English</option>
-      <option value="english">English</option>
-      <option value="bengali">বাংলা</option>
-    </select>
-  </div>
+  <div class="chat" id="chat"></div>
+
+  <textarea
+    id="userInput"
+    placeholder="Ask NOVA anything... / NOVA-কে কিছু জিজ্ঞাসা করো"
+  ></textarea>
+
+  <button class="send" onclick="sendMessage()">
+    Send Message ↑
+  </button>
+
+  <button class="clear" onclick="clearChat()">
+    Clear Conversation
+  </button>
+
 </div>
-
-<div id="chat">
-  <div class="message bot">
-    Hello! I am NOVA.
-
-    আমি NOVA। তোমাকে কীভাবে সাহায্য করতে পারি?
-
-    <small>Prototype assistant</small>
-  </div>
-</div>
-
-<textarea id="prompt"
-placeholder="Ask NOVA anything... / NOVA-কে কিছু জিজ্ঞাসা করো"
-></textarea>
-
-<button onclick="sendMessage()">Send message ↑</button>
 
 <footer>
-NOVA AI · Intelligence. Creativity. Possibility.
-<br><br>
-Experimental prototype. Not yet connected to an AI model.
+  NOVA AI · Intelligence. Creativity. Possibility.
+  <br><br>
+  Experimental prototype. AI model integration coming later.
 </footer>
 
-</main>
-
 <script>
-const chat = document.getElementById("chat");
 
-function detectScript(text) {
-  if (/[\u0980-\u09FF]/.test(text)) return "bengali";
-  if (/[\u0900-\u097F]/.test(text)) return "hindi";
-  if (/[\u0600-\u06FF]/.test(text)) return "arabic";
-  if (/[\u3040-\u30FF\u4E00-\u9FFF]/.test(text)) return "east-asian";
-  if (/[\uAC00-\uD7AF]/.test(text)) return "korean";
-  if (/[\u0400-\u04FF]/.test(text)) return "cyrillic";
-  if (/[A-Za-z]/.test(text)) return "english";
-  return "unknown";
+const chat = document.getElementById("chat");
+const input = document.getElementById("userInput");
+
+let history = [];
+
+function detectLanguage(text) {
+  if (/[\u0980-\u09FF]/.test(text)) {
+    return "bn";
+  }
+
+  if (/[\u0900-\u097F]/.test(text)) {
+    return "hi";
+  }
+
+  return "en";
 }
 
-function addMessage(text, type) {
-  const div = document.createElement("div");
-  div.className = "message " + type;
-  div.textContent = text;
-  chat.appendChild(div);
+function addMessage(sender, message) {
+  const box = document.createElement("div");
+  box.className = "message " + sender;
+
+  const label = document.createElement("div");
+  label.className = "sender";
+  label.textContent = sender === "user" ? "YOU" : "NOVA";
+
+  const content = document.createElement("div");
+  content.textContent = message;
+
+  box.appendChild(label);
+  box.appendChild(content);
+
+  chat.appendChild(box);
   chat.scrollTop = chat.scrollHeight;
 }
 
-function getReply(text) {
-  const style = document.getElementById("personality").value;
-  const language = document.getElementById("language").value;
-  const detected = detectScript(text);
+function getResponse(message) {
 
-  const lang = language === "auto"
-    ? detected
-    : language;
+  const language = detectLanguage(message);
+  const text = message.toLowerCase().trim();
 
-  const lower = text.toLowerCase();
+  // Bengali responses
+  if (language === "bn") {
 
-  let topic = "general";
+    if (/হ্যালো|হাই|নমস্কার|আসসালামু/.test(text)) {
+      return "নমস্কার! আমি NOVA, তোমার multilingual AI assistant prototype। আজ কীভাবে সাহায্য করতে পারি?";
+    }
 
-  if (/explain|what is|কী|বুঝিয়ে|समझाओ/.test(lower))
-    topic = "learning";
+    if (/তোমার নাম|কে তুমি/.test(text)) {
+      return "আমি NOVA AI। আমি একটি multilingual AI assistant prototype।";
+    }
 
-  if (/code|html|javascript|programming/.test(lower))
-    topic = "coding";
+    if (/কেমন আছো|কেমন আছেন/.test(text)) {
+      return "আমি সাহায্য করার জন্য প্রস্তুত! তুমি কেমন আছো?";
+    }
 
-  if (/write|essay|email|লিখে/.test(lower))
-    topic = "writing";
+    if (/ধন্যবাদ/.test(text)) {
+      return "তোমাকে স্বাগতম! NOVA সবসময় সাহায্য করতে প্রস্তুত।";
+    }
 
-  let tone = style;
-
-  if (style === "adaptive") {
-    tone = topic === "coding" ? "technical" :
-           topic === "writing" ? "professional" :
-           "friendly";
+    return "তোমার বার্তাটি পেয়েছি। আমি NOVA-এর experimental prototype। প্রকৃত AI model এখনো সংযুক্ত হয়নি। ভবিষ্যতে আমি আরও উন্নত উত্তর দিতে পারব।";
   }
 
-  let reply;
+  // Hindi responses
+  if (language === "hi") {
 
-  if (lang === "bengali" || lang === "both") {
-    reply = topic === "learning"
-      ? "আমি তোমার প্রশ্নটি বুঝেছি। চলো বিষয়টি ধাপে ধাপে শিখি।\n\nএটি বর্তমানে একটি প্রোটোটাইপ।"
-      : topic === "coding"
-      ? "চমৎকার! আমরা কোডিংয়ের বিষয়টি ধাপে ধাপে বিশ্লেষণ করব।\n\nএটি বর্তমানে একটি প্রোটোটাইপ।"
-      : "তোমার বার্তাটি পেয়েছি। আমি NOVA-এর প্রোটোটাইপ সংস্করণ।\n\nপ্রকৃত AI model এখনো সংযুক্ত হয়নি।";
+    if (/नमस्ते|हेलो|हाय/.test(text)) {
+      return "नमस्ते! मैं NOVA हूं। आज मैं आपकी कैसे मदद कर सकता हूं?";
+    }
 
-    if (lang === "both")
-      reply += "\n\n[English] I received your message. Full multilingual AI capabilities will come after model integration.";
-
-  } else {
-    reply = topic === "learning"
-      ? "Let's understand this topic step by step. The current prototype does not yet have a connected knowledge model."
-      : topic === "coding"
-      ? "Let's approach this technically. The current prototype can demonstrate the interface, but cannot execute or generate intelligent code yet."
-      : "I received your message. I am the NOVA prototype. A real AI model has not been connected yet.";
+    return "आपका संदेश मिल गया। मैं NOVA का multilingual prototype हूं। वास्तविक AI model अभी कनेक्ट नहीं है।";
   }
 
-  if (tone === "professional")
-    reply = "Professional mode\n\n" + reply;
+  // English responses
+  if (/hello|^hi$|hey|good morning|good evening/.test(text)) {
+    return "Hello! I am NOVA, your multilingual AI assistant prototype. How can I help you today?";
+  }
 
-  if (tone === "technical")
-    reply = "Technical mode\n\n" + reply;
+  if (/your name|who are you/.test(text)) {
+    return "I am NOVA AI, an experimental multilingual assistant designed to help with information, creativity and productivity.";
+  }
 
-  return reply;
+  if (/how are you/.test(text)) {
+    return "I am ready to assist you! What would you like to explore today?";
+  }
+
+  if (/thank you|thanks/.test(text)) {
+    return "You're welcome! Let me know what you would like to explore next.";
+  }
+
+  if (/what can you do|help/.test(text)) {
+    return "I am designed for:\n\n1. General assistance\n2. Learning and education\n3. Creative ideas\n4. Productivity\n5. Multilingual communication\n\nReal AI integration is still under development.";
+  }
+
+  return "I received your message. I am currently running as an experimental prototype. A real AI model has not been connected yet.";
 }
 
 function sendMessage() {
-  const input = document.getElementById("prompt");
-  const text = input.value.trim();
 
-  if (!text) return;
+  const message = input.value.trim();
 
-  addMessage(text, "user");
+  if (!message) return;
 
-  const response = getReply(text);
-  addMessage(response, "bot");
+  addMessage("user", message);
+
+  const response = getResponse(message);
+
+  addMessage("bot", response);
+
+  history.push({
+    user: message,
+    assistant: response,
+    time: new Date().toISOString()
+  });
+
+  try {
+    localStorage.setItem(
+      "nova_chat_history",
+      JSON.stringify(history)
+    );
+  } catch (error) {
+    console.log("History could not be saved.");
+  }
 
   input.value = "";
+  input.focus();
 }
 
-document.getElementById("prompt")
-  .addEventListener("keydown", function(event) {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      sendMessage();
+function clearChat() {
+
+  history = [];
+
+  try {
+    localStorage.removeItem("nova_chat_history");
+  } catch (error) {
+    console.log("Could not clear saved history.");
+  }
+
+  chat.innerHTML = "";
+
+  welcomeMessage();
+}
+
+function welcomeMessage() {
+  addMessage(
+    "bot",
+    "Hello! I am NOVA. তোমাকে স্বাগতম! আমি কীভাবে সাহায্য করতে পারি?\n\nPrototype assistant."
+  );
+}
+
+function loadHistory() {
+
+  try {
+    const saved = localStorage.getItem("nova_chat_history");
+
+    if (saved) {
+      history = JSON.parse(saved);
+
+      history.forEach(item => {
+        addMessage("user", item.user);
+        addMessage("bot", item.assistant);
+      });
+
+      return;
     }
-  });
+  } catch (error) {
+    history = [];
+  }
+
+  welcomeMessage();
+}
+
+input.addEventListener("keydown", function(event) {
+
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    sendMessage();
+  }
+
+});
+
+loadHistory();
+
 </script>
 
 </body>
