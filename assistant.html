@@ -113,6 +113,11 @@ button {
   color: white;
 }
 
+.send:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
 .clear {
   display: block;
   margin: 12px auto;
@@ -143,7 +148,7 @@ button:active {
 <div class="container">
 
   <div class="status">
-    ● NOVA Assistant | Multilingual Prototype
+    ● NOVA Assistant | AI-powered multilingual assistant
   </div>
 
   <div class="chat" id="chat"></div>
@@ -153,7 +158,7 @@ button:active {
     placeholder="Ask NOVA anything... / NOVA-কে কিছু জিজ্ঞাসা করো"
   ></textarea>
 
-  <button class="send" onclick="sendMessage()">
+  <button class="send" id="sendButton" onclick="sendMessage()">
     Send Message ↑
   </button>
 
@@ -166,34 +171,36 @@ button:active {
 <footer>
   NOVA AI · Intelligence. Creativity. Possibility.
   <br><br>
-  Experimental prototype. AI model integration coming later.
+  Powered by OpenAI
 </footer>
 
 <script>
 
+// NOVA AI BACKEND CONNECTION
+
+const API_URL =
+"https://nova-ai-brain.fayezuddinrahaman2009.workers.dev/chat";
+
+const STORAGE_KEY = "nova_chat_history_v2";
+
 const chat = document.getElementById("chat");
 const input = document.getElementById("userInput");
+const sendButton = document.getElementById("sendButton");
 
 let history = [];
+let isSending = false;
 
-function detectLanguage(text) {
-  if (/[\u0980-\u09FF]/.test(text)) {
-    return "bn";
-  }
 
-  if (/[\u0900-\u097F]/.test(text)) {
-    return "hi";
-  }
-
-  return "en";
-}
+// DISPLAY MESSAGES
 
 function addMessage(sender, message) {
+
   const box = document.createElement("div");
   box.className = "message " + sender;
 
   const label = document.createElement("div");
   label.className = "sender";
+
   label.textContent = sender === "user" ? "YOU" : "NOVA";
 
   const content = document.createElement("div");
@@ -203,153 +210,251 @@ function addMessage(sender, message) {
   box.appendChild(content);
 
   chat.appendChild(box);
+
   chat.scrollTop = chat.scrollHeight;
+
+  return box;
 }
 
-function getResponse(message) {
 
-  const language = detectLanguage(message);
-  const text = message.toLowerCase().trim();
+// SAVE CONVERSATION
 
-  // Bengali responses
-  if (language === "bn") {
-
-    if (/হ্যালো|হাই|নমস্কার|আসসালামু/.test(text)) {
-      return "নমস্কার! আমি NOVA, তোমার multilingual AI assistant prototype। আজ কীভাবে সাহায্য করতে পারি?";
-    }
-
-    if (/তোমার নাম|কে তুমি/.test(text)) {
-      return "আমি NOVA AI। আমি একটি multilingual AI assistant prototype।";
-    }
-
-    if (/কেমন আছো|কেমন আছেন/.test(text)) {
-      return "আমি সাহায্য করার জন্য প্রস্তুত! তুমি কেমন আছো?";
-    }
-
-    if (/ধন্যবাদ/.test(text)) {
-      return "তোমাকে স্বাগতম! NOVA সবসময় সাহায্য করতে প্রস্তুত।";
-    }
-
-    return "তোমার বার্তাটি পেয়েছি। আমি NOVA-এর experimental prototype। প্রকৃত AI model এখনো সংযুক্ত হয়নি। ভবিষ্যতে আমি আরও উন্নত উত্তর দিতে পারব।";
-  }
-
-  // Hindi responses
-  if (language === "hi") {
-
-    if (/नमस्ते|हेलो|हाय/.test(text)) {
-      return "नमस्ते! मैं NOVA हूं। आज मैं आपकी कैसे मदद कर सकता हूं?";
-    }
-
-    return "आपका संदेश मिल गया। मैं NOVA का multilingual prototype हूं। वास्तविक AI model अभी कनेक्ट नहीं है।";
-  }
-
-  // English responses
-  if (/hello|^hi$|hey|good morning|good evening/.test(text)) {
-    return "Hello! I am NOVA, your multilingual AI assistant prototype. How can I help you today?";
-  }
-
-  if (/your name|who are you/.test(text)) {
-    return "I am NOVA AI, an experimental multilingual assistant designed to help with information, creativity and productivity.";
-  }
-
-  if (/how are you/.test(text)) {
-    return "I am ready to assist you! What would you like to explore today?";
-  }
-
-  if (/thank you|thanks/.test(text)) {
-    return "You're welcome! Let me know what you would like to explore next.";
-  }
-
-  if (/what can you do|help/.test(text)) {
-    return "I am designed for:\n\n1. General assistance\n2. Learning and education\n3. Creative ideas\n4. Productivity\n5. Multilingual communication\n\nReal AI integration is still under development.";
-  }
-
-  return "I received your message. I am currently running as an experimental prototype. A real AI model has not been connected yet.";
-}
-
-function sendMessage() {
-
-  const message = input.value.trim();
-
-  if (!message) return;
-
-  addMessage("user", message);
-
-  const response = getResponse(message);
-
-  addMessage("bot", response);
-
-  history.push({
-    user: message,
-    assistant: response,
-    time: new Date().toISOString()
-  });
+function saveHistory() {
 
   try {
     localStorage.setItem(
-      "nova_chat_history",
+      STORAGE_KEY,
       JSON.stringify(history)
     );
   } catch (error) {
-    console.log("History could not be saved.");
+    console.log("Could not save conversation.");
   }
+}
+
+
+// SEND MESSAGE TO OPENAI THROUGH CLOUDFLARE
+
+async function sendMessage() {
+
+  const message = input.value.trim();
+
+  if (!message || isSending) return;
+
+  isSending = true;
 
   input.value = "";
-  input.focus();
+  sendButton.disabled = true;
+  sendButton.textContent = "NOVA is thinking...";
+
+  addMessage("user", message);
+
+  const thinking = addMessage("bot", "NOVA is thinking...");
+
+  const previousHistory = history.slice(-10);
+
+  try {
+
+    const response = await fetch(API_URL, {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+
+        message: message,
+
+        history: previousHistory
+
+      })
+
+    });
+
+    const data = await response.json();
+
+    thinking.remove();
+
+    if (!response.ok || !data.success) {
+
+      throw new Error(
+        data.error || "AI service unavailable."
+      );
+
+    }
+
+    const reply = data.reply;
+
+    addMessage("bot", reply);
+
+    history.push(
+      { role: "user", content: message },
+      { role: "assistant", content: reply }
+    );
+
+    history = history.slice(-20);
+
+    saveHistory();
+
+  } catch (error) {
+
+    thinking.remove();
+
+    addMessage(
+      "bot",
+      "Sorry! NOVA could not connect to its AI brain.\n\n" +
+      "Error: " + error.message +
+      "\n\nPlease try again."
+    );
+
+    console.error("NOVA error:", error);
+
+  } finally {
+
+    isSending = false;
+
+    sendButton.disabled = false;
+    sendButton.textContent = "Send Message ↑";
+
+    input.focus();
+
+  }
+
 }
+
+
+// CLEAR CONVERSATION
 
 function clearChat() {
 
   history = [];
 
   try {
+    localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem("nova_chat_history");
   } catch (error) {
-    console.log("Could not clear saved history.");
+    console.log("Could not clear history.");
   }
 
   chat.innerHTML = "";
 
   welcomeMessage();
+
 }
 
+
+// WELCOME MESSAGE
+
 function welcomeMessage() {
+
   addMessage(
     "bot",
-    "Hello! I am NOVA. তোমাকে স্বাগতম! আমি কীভাবে সাহায্য করতে পারি?\n\nPrototype assistant."
+    "Hello! I am NOVA AI.\n\n" +
+    "নমস্কার! আমি NOVA AI।\n\n" +
+    "How can I help you today? / " +
+    "আমি কীভাবে সাহায্য করতে পারি?"
   );
+
 }
+
+
+// LOAD PREVIOUS CONVERSATION
 
 function loadHistory() {
 
   try {
-    const saved = localStorage.getItem("nova_chat_history");
+
+    let saved = localStorage.getItem(STORAGE_KEY);
 
     if (saved) {
+
       history = JSON.parse(saved);
 
-      history.forEach(item => {
-        addMessage("user", item.user);
-        addMessage("bot", item.assistant);
-      });
+    } else {
 
-      return;
+      // Migrate older prototype conversations.
+
+      const oldSaved =
+        localStorage.getItem("nova_chat_history");
+
+      if (oldSaved) {
+
+        const oldHistory = JSON.parse(oldSaved);
+
+        history = [];
+
+        oldHistory.forEach(item => {
+
+          if (item.user) {
+            history.push({
+              role: "user",
+              content: item.user
+            });
+          }
+
+          if (item.assistant) {
+            history.push({
+              role: "assistant",
+              content: item.assistant
+            });
+          }
+
+        });
+
+        history = history.slice(-20);
+
+      }
+
     }
+
+    history = history.filter(item =>
+      item &&
+      ["user", "assistant"].includes(item.role) &&
+      typeof item.content === "string"
+    ).slice(-20);
+
+    history.forEach(item => {
+
+      addMessage(
+        item.role === "user" ? "user" : "bot",
+        item.content
+      );
+
+    });
+
+    if (history.length === 0) {
+      welcomeMessage();
+    }
+
+    saveHistory();
+
   } catch (error) {
+
     history = [];
+    welcomeMessage();
+
   }
 
-  welcomeMessage();
 }
+
+
+// ENTER TO SEND
 
 input.addEventListener("keydown", function(event) {
 
   if (event.key === "Enter" && !event.shiftKey) {
+
     event.preventDefault();
+
     sendMessage();
+
   }
 
 });
+
+
+// START NOVA
 
 loadHistory();
 
